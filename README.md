@@ -33,6 +33,16 @@ Clone the repository and install dependencies:
 pnpm install
 
 ```
+
+Make sure all dependencies are installed
+```bash
+pnpm add @google/generative-ai mongoose bcryptjs jsonwebtoken @supabase/supabase-js
+```
+
+Run the dev environment
+```bash
+pnpm dev
+```
 ### Mock Credentials (Summary)
 
 | Name           | Surname  | NIN      | Expiry     |
