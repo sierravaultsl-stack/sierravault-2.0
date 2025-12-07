@@ -30,3 +30,40 @@ Built on a robust blockchain infrastructure, SierraVault ensures your documents 
 Clone the repository and install dependencies:
 ```bash
 pnpm install
+
+
+[
+  {
+    "surname": "Kamara",
+    "name": "Sorie",
+    "middlename": "Amadu",
+    "sex": "M",
+    "height": "5'8\"",
+    "dob": "1989-03-12",
+    "dateOfExpiry": "2029-03-12",
+    "personalIdNumber": "SL100000000000000000001",
+    "nin": "1AAKDES"
+  },
+  {
+    "surname": "Kargbo",
+    "name": "Hawa",
+    "middlename": "Isata",
+    "sex": "F",
+    "height": "5'5\"",
+    "dob": "1992-07-22",
+    "dateOfExpiry": "2032-07-22",
+    "personalIdNumber": "SL100000000000000000002",
+    "nin": "1BBHDES"
+  },
+  {
+    "surname": "Bangura",
+    "name": "Mohamed",
+    "middlename": "Lamin",
+    "sex": "M",
+    "height": "5'10\"",
+    "dob": "1986-11-09",
+    "dateOfExpiry": "2026-11-09",
+    "personalIdNumber": "SL100000000000000000003",
+    "nin": "1CCMDES"
+  }
+]
