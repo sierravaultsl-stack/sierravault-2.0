@@ -29,6 +29,7 @@ Built on a robust blockchain infrastructure, SierraVault ensures your documents 
 ### Installation
 Clone the repository and install dependencies:
 ```bash
+
 pnpm install
 
 ```
@@ -41,5 +42,6 @@ pnpm install
 | Mohamed Bangura| Bangura | 1CCMDES  | 2026-11-09 |
 | ...            | ...     | ...      | ...        |
 
-> Full list is in [`mock-data/unused.json`](mock-data/unused.json)
+> Full unsued list is in [`mock-data/unused.json`](mock-data/unused.json)
+> Full used list is in [`mock-data/unused.json`](mock-data/used.json)
 
