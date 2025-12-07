@@ -1,0 +1,24 @@
+[
+  {
+    "surname": "Kamara",
+    "name": "Abdul",
+    "middlename": "Foday",
+    "sex": "M",
+    "height": "5'9\"",
+    "dob": "1990-05-14T00:00:00.000Z",
+    "dateOfExpiry": "2030-05-14T00:00:00.000Z",
+    "personalIdNumber": "SL123456789012345678901",
+    "nin": "1RRBDES"
+  },
+  {
+    "surname": "Sesay",
+    "name": "Aisha",
+    "middlename": "Fatmata",
+    "sex": "F",
+    "height": "5'5\"",
+    "dob": "1985-11-22T00:00:00.000Z",
+    "dateOfExpiry": "2035-11-22T00:00:00.000Z",
+    "personalIdNumber": "SL987654321098765432109",
+    "nin": "2TYUJKL"
+  }
+]
