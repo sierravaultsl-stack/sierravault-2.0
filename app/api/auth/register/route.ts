@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
@@ -25,6 +26,14 @@ export async function POST(req: NextRequest) {
   if (!email || !password || !telephone) {
     return NextResponse.json(
       { error: "Email, password and telephone are required." },
+      { status: 400 }
+    );
+  }
+
+  // Validate NIN length if provided
+  if (nin && (nin.length < 7 || nin.length > 8)) {
+    return NextResponse.json(
+      { error: "NIN must be 7 or 8 characters long." },
       { status: 400 }
     );
   }
@@ -75,21 +84,28 @@ export async function POST(req: NextRequest) {
   // Hash password
   const hashed = await bcrypt.hash(password, 12);
 
-  // Create vault first (without userId initially)
-  const vault = await Vault.create({ documents: [] });
+  // Generate IDs upfront to solve circular dependency
+  const newUserId = new mongoose.Types.ObjectId();
+  const newVaultId = new mongoose.Types.ObjectId();
 
-  // Create user
+  // Create vault with known userId
+  await Vault.create({
+    _id: newVaultId,
+    userId: newUserId,
+    // documents: [] // Field removed from schema
+  });
+
+  // Create user with known _id and vaultId
   const user = await User.create({
+    _id: newUserId,
     email,
     password: hashed,
     telephone,
     nin: nin || undefined,
-    vaultId: vault._id,
+    vaultId: newVaultId,
   });
 
-  // Update vault with userId after user is created
-  vault.userId = user._id;
-  await vault.save();
+  // vault.userId is already set, no need to update
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
     expiresIn: "7d",

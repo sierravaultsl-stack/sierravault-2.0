@@ -17,6 +17,13 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        if (nin.length < 7 || nin.length > 8) {
+            return NextResponse.json(
+                { error: "NIN must be 7 or 8 characters long." },
+                { status: 400 }
+            );
+        }
+
         // Check if NIN exists in national registry
         const ninRecord = await NIN.findOne({ nin });
         if (!ninRecord) {

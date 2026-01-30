@@ -8,6 +8,11 @@ export interface IUser extends Document {
     vaultId: mongoose.Types.ObjectId;
     resetToken?: string;
     resetTokenExpiry?: Date;
+    // Simplified Roles
+    role: "citizen" | "gov";
+    organizationId?: mongoose.Types.ObjectId;
+    permissions?: string[];
+    isActive: boolean;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -19,6 +24,17 @@ const UserSchema = new Schema<IUser>(
         vaultId: { type: Schema.Types.ObjectId, ref: "Vault", required: true },
         resetToken: { type: String, required: false },
         resetTokenExpiry: { type: Date, required: false },
+
+        // RBAC Fields
+        role: {
+            type: String,
+            enum: ["citizen", "gov"],
+            default: "citizen",
+            index: true
+        },
+        organizationId: { type: Schema.Types.ObjectId, ref: "Organization" },
+        permissions: [{ type: String }], // Granular generic permissions e.g. ["verify.education", "issue.birth_cert"]
+        isActive: { type: Boolean, default: true },
     },
     { timestamps: true }
 );

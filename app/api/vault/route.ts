@@ -25,14 +25,15 @@ export async function GET() {
     const vault = user.vaultId
 
     const normalizedDocs = vault?.documents?.map((doc: any) => ({
-        docId: doc._id.toString(),
-        docType: doc.label || "Document",
-        uploadDate: doc.uploadedAt,
-        status: "verified",               // You can adjust later
-        visibility: "private",            // Default for now
-        aiScore: 0.85,                    // Mock until you generate scores
-        txId: null,                       // Fill when blockchain is added
-        onChainHash: null,
+        _id: doc._id.toString(),
+        label: doc.label || "Document",
+        type: doc.type || "Other",
+        uploadedAt: doc.uploadedAt,
+        status: "verified",
+        visibility: "private",
+        aiScore: 0.85,
+        txId: null, // Fill when blockchain is added
+        blockchainHash: doc.blockchainHash || null,
         url: doc.url,
         mimeType: doc.type
     })) || []

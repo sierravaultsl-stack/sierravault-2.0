@@ -1,7 +1,7 @@
 "use server"
 
 import dbConnect from "@/lib/dbConnect"
-import Vault from "@/models/Vault"
+
 import mongoose from "mongoose"
 
 export async function getDocumentById(id: string) {
@@ -12,26 +12,21 @@ export async function getDocumentById(id: string) {
             return null
         }
 
-        // Find document inside any vault's documents[] array
-        const vault = await Vault.findOne(
-            { "documents._id": id },
-            { "documents.$": 1, userId: 1 } // Return only matching document
-        ).lean()
+        const doc = await import("@/models/Document").then(mod => mod.default.findById(id).lean());
 
-        if (!vault || !vault.documents || vault.documents.length === 0) {
+        if (!doc) {
             return null
         }
 
-        const doc = vault.documents[0]
-
         return {
             _id: doc._id.toString(),
-            label: doc.label,
-            url: doc.url,
+            label: doc.title, // Map title to label
+            url: doc.url, // Note: This exposes URL to Server Component. Be careful passing to Client.
             type: doc.type,
-            uploadedAt: doc.uploadedAt,
-            blockchainHash: doc.blockchainHash || null,
-            userId: vault.userId?.toString() ?? null,
+            uploadedAt: doc.createdAt,
+            blockchainHash: doc.metadata?.fileHash || null,
+            userId: doc.userId?.toString() ?? null,
+            status: doc.status
         }
     } catch (err) {
         console.error("getDocumentById error:", err)

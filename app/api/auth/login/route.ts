@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
 
   if (!identifier || !password) {
     return NextResponse.json(
-        { error: "Identifier and password are required." },
-        { status: 400 }
+      { error: "Identifier and password are required." },
+      { status: 400 }
     );
   }
 
@@ -31,7 +31,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid login credentials." }, { status: 400 });
   }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: "7d" });
+  const token = jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+      vaultId: user.vaultId
+    },
+    process.env.JWT_SECRET!,
+    { expiresIn: "7d" }
+  );
 
   // Set token in HttpOnly cookie
   const response = NextResponse.json({
@@ -42,6 +50,8 @@ export async function POST(req: NextRequest) {
       telephone: user.telephone,
       nin: user.nin,
       vaultId: user.vaultId,
+      role: user.role,
+      organizationId: user.organizationId,
     },
   });
 

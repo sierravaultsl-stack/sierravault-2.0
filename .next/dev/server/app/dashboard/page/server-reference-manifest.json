@@ -1,0 +1,20 @@
+{
+  "node": {
+    "604d77b2fdba5798f2d407006e740e53a77901b443": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/sierra-chat.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getSierraAIResponse",
+          "filename": "app/actions/sierra-chat.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
+      },
+      "exportedName": "getSierraAIResponse",
+      "filename": "app/actions/sierra-chat.ts"
+    }
+  },
+  "edge": {}
+}

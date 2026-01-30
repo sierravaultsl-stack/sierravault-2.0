@@ -1,0 +1,21 @@
+{
+  "node": {
+    "604d77b2fdba5798f2d407006e740e53a77901b443": {
+      "workers": {
+        "app/dashboard/gov/issue/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/gov/issue/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/sierra-chat.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getSierraAIResponse",
+          "filename": "app/actions/sierra-chat.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/gov/issue/page": "action-browser"
+      },
+      "filename": "app/actions/sierra-chat.ts",
+      "exportedName": "getSierraAIResponse"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "f8E88JJIZ0YYKiQHpc1iVUuBG3/dW3ihomNrWA5592s="
+}

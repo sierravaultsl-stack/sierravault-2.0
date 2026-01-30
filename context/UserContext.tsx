@@ -3,10 +3,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface DocumentType {
+    _id: string;
     label: string;
     url: string;
     type: string;
     uploadedAt: Date;
+    blockchainHash?: string;
 }
 
 interface NinRecordType {

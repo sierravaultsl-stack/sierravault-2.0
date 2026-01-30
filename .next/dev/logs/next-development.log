@@ -1,0 +1,7 @@
+[00:00:03.627] Server  WARN     ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:05.072] Server  LOG      ✓ Ready in 4s
+[00:00:09.009] Server  LOG      ○ Compiling /dashboard/gov/issue ...
+[00:00:22.034] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:24.717] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:24.717] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/dashboard/gov/issue","route":"/dashboard/gov/issue"}
+[00:00:24.720] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard/gov/issue color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/gov/issue","o":"http://localhost:3000/dashboard/gov/issue","sdkn":"@vercel/analytics/next","sdkv":"1.6.1","sv":"0.1.3","ts":1769777200143}

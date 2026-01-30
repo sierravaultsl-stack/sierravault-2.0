@@ -51,7 +51,7 @@ export function Navbar({ isLoggedIn = false, userName }: NavbarProps) {
         <div className="hidden lg:flex lg:items-center lg:gap-3">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
-              <Link href="/dashboard">
+              <Link href="/dashboard/me">
                 <Button variant="ghost" className="text-gray-300 hover:text-teal hover:bg-transparent">
                   Dashboard
                 </Button>
@@ -111,7 +111,7 @@ export function Navbar({ isLoggedIn = false, userName }: NavbarProps) {
           ))}
           <div className="pt-4 space-y-2">
             {isLoggedIn ? (
-              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/dashboard/me" onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full bg-teal text-[#0A2A43] hover:bg-teal-light font-semibold">Dashboard</Button>
               </Link>
             ) : (

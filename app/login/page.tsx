@@ -57,9 +57,17 @@ export default function LoginPage() {
       }
 
       showToast("success", "Login Successful", "Welcome back!")
-      
+
+
       setTimeout(() => {
-        router.push("/dashboard/me")
+        // Smart Redirect based on Role
+        // Smart Redirect based on Role
+        const role = data.user.role
+        if (role === "gov") {
+          router.push("/dashboard/gov")
+        } else {
+          router.push("/dashboard/me")
+        }
       }, 1000)
     } catch (error) {
       showToast("error", "Login Failed", "An unexpected error occurred. Please try again.")

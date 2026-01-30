@@ -22,7 +22,13 @@ const NinSchema = new Schema<INinRecord>(
         dob: { type: Date, required: true },
         dateOfExpiry: { type: Date, required: true },
         personalIdNumber: { type: String, required: true, unique: true },
-        nin: { type: String, required: true, unique: true },
+        nin: {
+            type: String,
+            required: true,
+            unique: true,
+            minlength: 7,
+            maxlength: 8
+        },
     },
     { timestamps: true }
 );

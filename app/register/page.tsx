@@ -106,7 +106,7 @@ export default function RegisterPage() {
       }
 
       showToast("success", "Registration Successful", "Your account has been created successfully.")
-      
+
       setTimeout(() => {
         router.push("/login")
       }, 1500)
@@ -359,10 +359,12 @@ export default function RegisterPage() {
                     <Input
                       id="nin"
                       type="text"
-                      placeholder="1RB9DEWZ"
+                      placeholder="SV12345"
                       className="pl-10 h-11 bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 rounded-lg focus:border-[#2DC5A0] focus:ring-[#2DC5A0]"
                       value={formData.nin}
                       onChange={(e) => setFormData({ ...formData, nin: e.target.value })}
+                      minLength={7}
+                      maxLength={8}
                     />
                   </div>
                   {formData.nin && (

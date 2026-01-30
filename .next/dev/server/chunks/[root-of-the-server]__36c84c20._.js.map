@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/USER/Desktop/A10%20Projects/SierraVaultMain/app/api/auth/logout/route.ts"],"sourcesContent":["import { NextResponse } from \"next/server\";\r\n\r\nexport async function POST() {\r\n    const response = NextResponse.json({ message: \"Logged out successfully.\" });\r\n\r\n    response.cookies.delete({\r\n        name: \"token\",\r\n        httpOnly: true,\r\n        secure: process.env.NODE_ENV === \"production\",\r\n        path: \"/\",\r\n        maxAge: 0,\r\n    });\r\n\r\n    return response;\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;;AAEO,eAAe;IAClB,MAAM,WAAW,+QAAY,CAAC,IAAI,CAAC;QAAE,SAAS;IAA2B;IAEzE,SAAS,OAAO,CAAC,MAAM,CAAC;QACpB,MAAM;QACN,UAAU;QACV,QAAQ,oDAAyB;QACjC,MAAM;QACN,QAAQ;IACZ;IAEA,OAAO;AACX"}}]
+}

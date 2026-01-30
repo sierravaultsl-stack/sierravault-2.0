@@ -1,0 +1,35 @@
+{
+  "node": {
+    "604d77b2fdba5798f2d407006e740e53a77901b443": {
+      "workers": {
+        "app/dashboard/verify/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/verify/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/sierra-chat.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/lib/getDocumentById.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getSierraAIResponse",
+          "filename": "app/actions/sierra-chat.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/verify/page": "action-browser"
+      },
+      "exportedName": "getSierraAIResponse",
+      "filename": "app/actions/sierra-chat.ts"
+    },
+    "40365f388d6b63ed5938c46b46528be963d9ca37ae": {
+      "workers": {
+        "app/dashboard/verify/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/verify/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/sierra-chat.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/lib/getDocumentById.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getDocumentById",
+          "filename": "lib/getDocumentById.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/verify/page": "rsc"
+      },
+      "exportedName": "getDocumentById",
+      "filename": "lib/getDocumentById.ts"
+    }
+  },
+  "edge": {}
+}

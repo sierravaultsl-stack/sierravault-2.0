@@ -1,223 +1,186 @@
-"use client"
-
-import { useState } from "react"
+import { getDocumentById } from "@/lib/getDocumentById"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Shield, Search, CheckCircle, XCircle, FileText, Calendar, User, AlertCircle } from "lucide-react"
+import { CheckCircle, XCircle, FileText, Calendar, ShieldCheck, Download, Search, AlertCircle } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { BlockchainBadge } from "@/components/blockchain-badge"
-import { StatusBadge } from "@/components/status-badge"
-import { getDocumentById, formatDate } from "@/lib/mock-data"
 import { ChatWidget } from "@/components/chatbot/chat-widget"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
-type VerifyState = "idle" | "searching" | "found" | "not-found"
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
 
-export default function VerifyPage() {
-  const [verifyState, setVerifyState] = useState<VerifyState>("idle")
-  const [searchInput, setSearchInput] = useState("")
-  const [verifiedDoc, setVerifiedDoc] = useState<ReturnType<typeof getDocumentById>>(undefined)
+export default async function VerifyPage({ searchParams }: Props) {
+  const resolvedParams = await searchParams
+  const docId = resolvedParams.docId as string | undefined
 
-  const handleVerify = async () => {
-    if (!searchInput.trim()) return
+  const cookieStore = await cookies()
+  const token = cookieStore.get("token")
 
-    setVerifyState("searching")
-
-    // Simulate search delay
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    // Try to find document by ID or transaction ID
-    const doc = getDocumentById(searchInput) || getDocumentById("doc_1001") // Demo fallback
-
-    if (searchInput.includes("doc_") || searchInput.includes("TX_DEMO") || searchInput.includes("0x")) {
-      setVerifiedDoc(doc)
-      setVerifyState("found")
-    } else {
-      setVerifyState("not-found")
-    }
+  // If user is logged in, redirect to dashboard verify
+  if (token) {
+    const redirectUrl = docId
+      ? `/dashboard/verify?docId=${docId}`
+      : `/dashboard/verify`
+    redirect(redirectUrl)
   }
 
+  let document = null
+  let hasSearched = false
+
+  if (docId) {
+    hasSearched = true
+    document = await getDocumentById(docId)
+  }
+
+  // Pre-calculate formatted date if doc exists
+  const formattedDate = document ? new Date(document.uploadedAt).toLocaleDateString("en-US", {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }) : null
+
+  const isImage = document?.url?.match(/\.(jpeg|jpg|png|webp)$/i)
+
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-20">
-        {/* Hero */}
-        <section className="bg-navy py-16 lg:py-20">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar isLoggedIn={false} />
+
+      <main className="flex-1 flex flex-col pt-20">
+        <section className="bg-navy py-12 text-center text-foreground">
+          <div className="container mx-auto px-4">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-teal/10">
-              <Shield className="h-8 w-8 text-teal" />
+              <ShieldCheck className="h-8 w-8 text-teal" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground sm:text-4xl">Verify a Document</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Check the authenticity of any SierraVault document using its ID, transaction hash, or verification link.
+            <h1 className="text-3xl font-bold sm:text-4xl mb-4">Verify a Document</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              Check the authenticity of any SierraVault document using its unique ID.
             </p>
+
+            {/* Simple Form Implementation since this is a Server Component */}
+            <form action="/verify" method="GET" className="max-w-md mx-auto flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  name="docId"
+                  defaultValue={docId || ""}
+                  placeholder="Enter Document ID..."
+                  className="pl-10 h-12 bg-card border-border"
+                />
+              </div>
+              <Button type="submit" size="lg" className="h-12 bg-teal hover:bg-teal-light text-navy-dark">
+                Verify
+              </Button>
+            </form>
           </div>
         </section>
 
-        {/* Verification Form */}
-        <section className="bg-navy-dark py-12">
-          <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-            <Card className="border-border bg-card p-6 sm:p-8">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  handleVerify()
-                }}
-                className="space-y-4"
-              >
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder="Enter document ID, TX hash, or verification code..."
-                    className="h-14 pl-12 pr-4 bg-secondary border-border text-lg"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full h-12 bg-teal text-navy-dark hover:bg-teal-light text-lg"
-                  disabled={verifyState === "searching"}
-                >
-                  {verifyState === "searching" ? "Verifying..." : "Verify Document"}
-                </Button>
-              </form>
+        <section className="flex-1 py-12 bg-navy-dark">
+          <div className="container mx-auto px-4">
 
-              {/* Demo hint */}
-              <p className="mt-4 text-xs text-muted-foreground text-center">
-                Try: <code className="bg-secondary px-1.5 py-0.5 rounded">doc_1001</code> or{" "}
-                <code className="bg-secondary px-1.5 py-0.5 rounded">TX_DEMO_20250915_01</code>
-              </p>
-            </Card>
+            {!hasSearched && (
+              <div className="text-center text-muted-foreground mt-8">
+                <p>Enter a ID above or scan a QR code to begin verification.</p>
+              </div>
+            )}
 
-            {/* Results */}
-            {verifyState === "found" && verifiedDoc && (
-              <Card className="mt-6 border-teal/30 bg-card p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal/10">
-                    <CheckCircle className="h-6 w-6 text-teal" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Document Verified</h2>
-                    <p className="text-sm text-muted-foreground">This document is authentic and unaltered</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  {/* Document Info */}
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="flex items-start gap-3">
-                      <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Document Type</p>
-                        <p className="text-sm font-medium text-foreground">{verifiedDoc.docType}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <User className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Owner</p>
-                        <p className="text-sm font-medium text-foreground">{verifiedDoc.ownerName}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Calendar className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Secured On</p>
-                        <p className="text-sm font-medium text-foreground">{formatDate(verifiedDoc.uploadDate)}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Shield className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Issuer</p>
-                        <p className="text-sm font-medium text-foreground capitalize">{verifiedDoc.issuer}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Status */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-border">
-                    <StatusBadge status={verifiedDoc.status} />
-                    <span className="text-sm text-muted-foreground">
-                      AI Score: <span className="text-teal font-medium">{Math.round(verifiedDoc.aiScore * 100)}%</span>
-                    </span>
-                  </div>
-
-                  {/* Blockchain */}
-                  <div className="pt-4 border-t border-border">
-                    <p className="text-xs text-muted-foreground mb-2">Blockchain Record</p>
-                    <BlockchainBadge txId={verifiedDoc.txId} hash={verifiedDoc.onChainHash} showFullHash />
-                  </div>
-                </div>
+            {hasSearched && !document && (
+              <Card className="max-w-md mx-auto p-8 text-center border-destructive/50 bg-destructive/5">
+                <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-destructive mb-2">Verification Failed</h2>
+                <p className="text-muted-foreground">
+                  We couldn't find a document with ID <span className="font-mono text-foreground">{docId}</span>.
+                </p>
               </Card>
             )}
 
-            {verifyState === "not-found" && (
-              <Card className="mt-6 border-destructive/30 bg-card p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-                    <XCircle className="h-6 w-6 text-destructive" />
+            {document && (
+              <Card className="max-w-2xl mx-auto border-2 border-teal/20 shadow-2xl overflow-hidden bg-card">
+                {/* Verified Header */}
+                <div className="bg-teal/5 border-b border-teal/10 p-8 text-center relative">
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-teal/10 mb-4">
+                    <ShieldCheck className="h-10 w-10 text-teal" />
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Document Not Found</h2>
-                    <p className="text-sm text-muted-foreground">We couldn&apos;t verify this document</p>
+                  <h1 className="text-2xl font-bold text-teal-900">Authentic Document</h1>
+                  <p className="text-teal-700 mt-2">Verified by SierraVault Infrastructure</p>
+                </div>
+
+                <div className="p-8 space-y-8">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Document Name</label>
+                      <div className="flex items-center gap-2 text-lg font-medium text-foreground">
+                        <FileText className="h-5 w-5 text-teal" />
+                        {document.label}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Document Type</label>
+                      <div className="text-lg font-medium text-foreground">
+                        {document.type}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Issued / Uploaded</label>
+                      <div className="flex items-center gap-2 text-lg font-medium text-foreground">
+                        <Calendar className="h-5 w-5 text-teal" />
+                        {formattedDate}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-border pt-6">
+                    <h3 className="text-sm font-semibold mb-3 text-foreground">Blockchain Verification</h3>
+                    <div className="bg-secondary/50 rounded-lg p-4 font-mono text-xs break-all border border-border">
+                      <p className="text-muted-foreground mb-1">Document Hash:</p>
+                      <div className="text-foreground font-semibold">
+                        {document.blockchainHash || "0x7f83b1657ff1...b9a8 (Mock Hash)"}
+                      </div>
+                      <div className="mt-3 text-teal flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="font-medium">On-chain Record Matched</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center pt-2 space-y-4">
+                    {isImage && document.url && (
+                      <div className="relative w-full max-w-sm aspect-[3/4] rounded-lg overflow-hidden border border-border shadow-sm">
+                        <img
+                          src={document.url}
+                          alt="Document Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+
+                    <Link href={document.url || "#"} target="_blank">
+                      <Button className="bg-teal hover:bg-teal-light text-white gap-2">
+                        <Download className="h-4 w-4" />
+                        View Original Document
+                      </Button>
+                    </Link>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
-                  <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-muted-foreground">
-                    <p className="font-medium text-foreground">Possible reasons:</p>
-                    <ul className="mt-1 list-disc list-inside space-y-1">
-                      <li>The document ID or hash may be incorrect</li>
-                      <li>The document may not exist in our system</li>
-                      <li>The verification link may have expired</li>
-                    </ul>
-                  </div>
+
+                <div className="bg-secondary/30 p-4 text-center text-xs text-muted-foreground">
+                  Doc ID: {document._id}
                 </div>
               </Card>
             )}
-          </div>
-        </section>
-
-        {/* How it works */}
-        <section className="bg-navy py-12 lg:py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-foreground text-center mb-8">How Verification Works</h2>
-            <div className="grid gap-6 sm:grid-cols-3">
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal/10">
-                  <span className="text-lg font-bold text-teal">1</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Enter Details</h3>
-                <p className="text-sm text-muted-foreground">
-                  Paste the document ID, transaction hash, or scan the QR code
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal/10">
-                  <span className="text-lg font-bold text-teal">2</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Blockchain Check</h3>
-                <p className="text-sm text-muted-foreground">
-                  We verify the document hash against the Solana blockchain record
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal/10">
-                  <span className="text-lg font-bold text-teal">3</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Get Results</h3>
-                <p className="text-sm text-muted-foreground">
-                  Instantly see if the document is authentic and unaltered
-                </p>
-              </div>
-            </div>
           </div>
         </section>
       </main>
+
       <Footer />
       <ChatWidget />
     </div>

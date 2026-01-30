@@ -2,8 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import crypto from "crypto";
-import Vault from "@/models/Vault";
-import {supabase} from "@/lib/superbaseClient";
+
+import { supabase } from "@/lib/superbaseClient";
 
 // Connect to MongoDB helper
 async function connectDB() {
@@ -44,30 +44,30 @@ export async function POST(req: NextRequest) {
         // Connect to MongoDB
         await connectDB();
 
-        // Update Vault
-        let vault = await Vault.findOne({ userId });
-        const docEntry = {
-            label: documentType,
+        // Create new Document
+        const newDoc = await import("@/models/Document").then(mod => mod.default.create({
+            userId,
+            type: documentType,
+            title: file.name, // Fallback title
             url: fileUrl,
-            type: file.type,
-            uploadedAt: new Date(),
-        };
+            status: 'PENDING_VERIFICATION',
+            metadata: {
+                mimeType: file.type,
+                sizeBytes: buffer.length,
+                fileHash: crypto.createHash("sha256").update(buffer).digest("hex")
+            }
+        }));
 
-        if (vault) {
-            vault.documents.push(docEntry);
-            await vault.save();
-        } else {
-            vault = await Vault.create({ userId, documents: [docEntry] });
-        }
-
-        // Blockchain hash (SHA256)
-        const blockchainHash = crypto.createHash("sha256").update(buffer).digest("hex");
+        // Blockchain hash (SHA256) - reusing what we calculated or just the one above
+        const blockchainHash = newDoc.metadata.fileHash;
 
         return NextResponse.json({
             message: "Uploaded successfully",
-            doc: docEntry,
+            doc: newDoc,
             blockchainHash,
         });
+
+
     } catch (err: any) {
         console.error("Upload error:", err);
         return NextResponse.json({ error: err.message }, { status: 500 });

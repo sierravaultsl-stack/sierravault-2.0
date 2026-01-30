@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
-import NIN from "@/models/NIN";
-import Vault from "@/models/Vault";
+
 import dbConnect from "@/lib/dbConnect";
 
 export async function GET(req: NextRequest) {
@@ -16,17 +15,17 @@ export async function GET(req: NextRequest) {
         const user = await User.findById(decoded.id).lean();
         if (!user) return NextResponse.json({ user: null }, { status: 404 });
 
-        // Fetch associated vault
-        const vault = await Vault.findById(user.vaultId).lean();
+        // Fetch documents from new Document model
+        const documents = await import("@/models/Document").then(mod => mod.default.find({ userId: user._id }).sort({ createdAt: -1 }).lean());
 
         // Fetch NIN record if user has a NIN
         let ninRecord = null;
         if (user.nin) {
-            ninRecord = await NIN.findOne({ nin: user.nin }).lean();
+            ninRecord = await import("@/models/NIN").then(mod => mod.default.findOne({ nin: user.nin }).lean());
         }
 
         return NextResponse.json({
-            user: { ...user, documents: vault?.documents || [], ninRecord },
+            user: { ...user, documents, ninRecord },
         });
     } catch (err) {
         console.error(err);
